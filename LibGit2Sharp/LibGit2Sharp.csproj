@@ -86,6 +86,7 @@
     <Compile Include="Core\Handles\IndexNameEntrySafeHandle.cs" />
     <Compile Include="Core\Handles\IndexReucEntrySafeHandle.cs" />
     <Compile Include="DiffAlgorithm.cs" />
+    <Compile Include="DiffExtensions.cs" />
     <Compile Include="EntryExistsException.cs" />
     <Compile Include="FetchOptionsBase.cs" />
     <Compile Include="Core\FetchPruneStrategy.cs" />
