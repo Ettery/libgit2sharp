@@ -69,18 +69,9 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNull(remote, "remote");
 
-            using (RemoteSafeHandle remoteHandle = Proxy.git_remote_lookup(repository.Handle, remote.Name, true))
+            using (RemoteSafeHandle remoteHandle = BuildRemoteSafeHandle(repository.Handle, remote.Name))
             {
-                var gitCallbacks = new GitRemoteCallbacks { version = 1 };
-
-                if (credentialsProvider != null)
-                {
-                    var callbacks = new RemoteCallbacks(credentialsProvider);
-                    gitCallbacks = callbacks.GenerateCallbacks();
-                }
-
-                Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks);
-                return Proxy.git_remote_ls(repository, remoteHandle);
+                return ListReferences(remoteHandle, credentialsProvider);
             }
         }
 
@@ -116,19 +107,24 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNull(url, "url");
 
-            using (RemoteSafeHandle remoteHandle = Proxy.git_remote_create_anonymous(repository.Handle, url))
+            using (RemoteSafeHandle remoteHandle = BuildRemoteSafeHandle(repository.Handle, url))
             {
-                GitRemoteCallbacks gitCallbacks = new GitRemoteCallbacks { version = 1 };
-
-                if (credentialsProvider != null)
-                {
-                    var callbacks = new RemoteCallbacks(credentialsProvider);
-                    gitCallbacks = callbacks.GenerateCallbacks();
-                }
-
-                Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks);
-                return Proxy.git_remote_ls(repository, remoteHandle);
+                return ListReferences(remoteHandle, credentialsProvider);
             }
+        }
+
+        private IEnumerable<DirectReference> ListReferences(RemoteSafeHandle remoteHandle, CredentialsHandler credentialsProvider)
+        {
+            GitRemoteCallbacks gitCallbacks = new GitRemoteCallbacks { version = 1 };
+
+            if (credentialsProvider != null)
+            {
+                var callbacks = new RemoteCallbacks(credentialsProvider);
+                gitCallbacks = callbacks.GenerateCallbacks();
+            }
+
+            Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks);
+            return Proxy.git_remote_ls(repository, remoteHandle);
         }
 
         static RemoteSafeHandle BuildRemoteSafeHandle(RepositorySafeHandle repoHandle, Remote remote)
