@@ -35,6 +35,18 @@ namespace LibGit2Sharp
         }
 
         /// <summary>
+        /// Create a new local branch with the specified name
+        /// </summary>
+        /// <param name="branches">The <see cref="BranchCollection"/> being worked with.</param>
+        /// <param name="name">The name of the branch.</param>
+        /// <param name="committish">Revparse spec for the target commit.</param>
+        /// <returns>A new <see cref="Branch"/>.</returns>
+        public static Branch Add(this BranchCollection branches, string name, string committish)
+        {
+            return branches.Add(name, committish, false);
+        }
+
+        /// <summary>
         /// Deletes the branch with the specified name.
         /// </summary>
         /// <param name="name">The name of the branch to delete.</param>
@@ -64,6 +76,18 @@ namespace LibGit2Sharp
             }
 
             branches.Remove(branch);
+        }
+
+        /// <summary>
+        /// Rename an existing local branch
+        /// </summary>
+        /// <param name="branch">The current local branch.</param>
+        /// <param name="newName">The new name the existing branch should bear.</param>
+        /// <param name="branches">The <see cref="BranchCollection"/> being worked with.</param>
+        /// <returns>A new <see cref="Branch"/>.</returns>
+        public static Branch Rename(this BranchCollection branches, Branch branch, string newName)
+        {
+            return branches.Rename(branch, newName, false);
         }
 
         /// <summary>
