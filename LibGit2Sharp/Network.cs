@@ -47,48 +47,16 @@ namespace LibGit2Sharp
         /// </para>
         /// </summary>
         /// <param name="remote">The <see cref="Remote"/> to list from.</param>
-        /// <returns>The references in the <see cref="Remote"/> repository.</returns>
-        public virtual IEnumerable<DirectReference> ListReferences(Remote remote)
-        {
-            return ListReferences(remote, null);
-        }
-
-        /// <summary>
-        /// List references in a <see cref="Remote"/> repository.
-        /// <para>
-        /// When the remote tips are ahead of the local ones, the retrieved
-        /// <see cref="DirectReference"/>s may point to non existing
-        /// <see cref="GitObject"/>s in the local repository. In that
-        /// case, <see cref="DirectReference.Target"/> will return <c>null</c>.
-        /// </para>
-        /// </summary>
-        /// <param name="remote">The <see cref="Remote"/> to list from.</param>
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
         /// <returns>The references in the <see cref="Remote"/> repository.</returns>
         public virtual IEnumerable<DirectReference> ListReferences(Remote remote, CredentialsHandler credentialsProvider)
         {
             Ensure.ArgumentNotNull(remote, "remote");
 
-            using (RemoteSafeHandle remoteHandle = BuildRemoteSafeHandle(repository.Handle, remote.Name))
+            using (RemoteSafeHandle remoteHandle = BuildRemoteSafeHandle(repository.Handle, remote))
             {
                 return ListReferences(remoteHandle, credentialsProvider);
             }
-        }
-
-        /// <summary>
-        /// List references in a remote repository.
-        /// <para>
-        /// When the remote tips are ahead of the local ones, the retrieved
-        /// <see cref="DirectReference"/>s may point to non existing
-        /// <see cref="GitObject"/>s in the local repository. In that
-        /// case, <see cref="DirectReference.Target"/> will return <c>null</c>.
-        /// </para>
-        /// </summary>
-        /// <param name="url">The url to list from.</param>
-        /// <returns>The references in the remote repository.</returns>
-        public virtual IEnumerable<DirectReference> ListReferences(string url)
-        {
-            return ListReferences(url, null);
         }
 
         /// <summary>
@@ -208,35 +176,6 @@ namespace LibGit2Sharp
         /// Fetch from the <see cref="Remote"/>.
         /// </summary>
         /// <param name="remote">The remote to fetch</param>
-        public virtual void Fetch(Remote remote)
-        {
-            Fetch(remote, (FetchOptions)null, null);
-        }
-
-        /// <summary>
-        /// Fetch from the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The remote to fetch</param>
-        /// <param name="options"><see cref="FetchOptions"/> controlling fetch behavior</param>
-        public virtual void Fetch(Remote remote, FetchOptions options)
-        {
-            Fetch(remote, options, null);
-        }
-
-        /// <summary>
-        /// Fetch from the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The remote to fetch</param>
-        /// <param name="logMessage">Message to use when updating the reflog.</param>
-        public virtual void Fetch(Remote remote, string logMessage)
-        {
-            Fetch(remote, (FetchOptions)null, logMessage);
-        }
-
-        /// <summary>
-        /// Fetch from the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The remote to fetch</param>
         /// <param name="options"><see cref="FetchOptions"/> controlling fetch behavior</param>
         /// <param name="logMessage">Message to use when updating the reflog.</param>
         public virtual void Fetch(Remote remote, FetchOptions options, string logMessage)
@@ -244,38 +183,6 @@ namespace LibGit2Sharp
             Ensure.ArgumentNotNull(remote, "remote");
 
             DoFetch(repository.Handle, remote, options, logMessage, new string[0]);
-        }
-
-        /// <summary>
-        /// Fetch from the <see cref="Remote"/>, using custom refspecs.
-        /// </summary>
-        /// <param name="remote">The remote to fetch</param>
-        /// <param name="refspecs">Refspecs to use, replacing the remote's fetch refspecs</param>
-        public virtual void Fetch(Remote remote, IEnumerable<string> refspecs)
-        {
-            Fetch(remote, refspecs, null, null);
-        }
-
-        /// <summary>
-        /// Fetch from the <see cref="Remote"/>, using custom refspecs.
-        /// </summary>
-        /// <param name="remote">The remote to fetch</param>
-        /// <param name="refspecs">Refspecs to use, replacing the remote's fetch refspecs</param>
-        /// <param name="options"><see cref="FetchOptions"/> controlling fetch behavior</param>
-        public virtual void Fetch(Remote remote, IEnumerable<string> refspecs, FetchOptions options)
-        {
-            Fetch(remote, refspecs, options, null);
-        }
-
-        /// <summary>
-        /// Fetch from the <see cref="Remote"/>, using custom refspecs.
-        /// </summary>
-        /// <param name="remote">The remote to fetch</param>
-        /// <param name="refspecs">Refspecs to use, replacing the remote's fetch refspecs</param>
-        /// <param name="logMessage">Message to use when updating the reflog.</param>
-        public virtual void Fetch(Remote remote, IEnumerable<string> refspecs, string logMessage)
-        {
-            Fetch(remote, refspecs, null, logMessage);
         }
 
         /// <summary>
@@ -298,46 +205,6 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="url">The url to fetch from</param>
         /// <param name="refspecs">The list of resfpecs to use</param>
-        public virtual void Fetch(
-            string url,
-            IEnumerable<string> refspecs)
-        {
-            Fetch(url, refspecs, null, null);
-        }
-
-        /// <summary>
-        /// Fetch from a url with a set of fetch refspecs
-        /// </summary>
-        /// <param name="url">The url to fetch from</param>
-        /// <param name="refspecs">The list of resfpecs to use</param>
-        /// <param name="options"><see cref="FetchOptions"/> controlling fetch behavior</param>
-        public virtual void Fetch(
-            string url,
-            IEnumerable<string> refspecs,
-            FetchOptions options)
-        {
-            Fetch(url, refspecs, options, null);
-        }
-
-        /// <summary>
-        /// Fetch from a url with a set of fetch refspecs
-        /// </summary>
-        /// <param name="url">The url to fetch from</param>
-        /// <param name="refspecs">The list of resfpecs to use</param>
-        /// <param name="logMessage">Message to use when updating the reflog.</param>
-        public virtual void Fetch(
-            string url,
-            IEnumerable<string> refspecs,
-            string logMessage)
-        {
-            Fetch(url, refspecs, null, logMessage);
-        }
-
-        /// <summary>
-        /// Fetch from a url with a set of fetch refspecs
-        /// </summary>
-        /// <param name="url">The url to fetch from</param>
-        /// <param name="refspecs">The list of resfpecs to use</param>
         /// <param name="options"><see cref="FetchOptions"/> controlling fetch behavior</param>
         /// <param name="logMessage">Message to use when updating the reflog.</param>
         public virtual void Fetch(
@@ -350,85 +217,6 @@ namespace LibGit2Sharp
             Ensure.ArgumentNotNull(refspecs, "refspecs");
 
             DoFetch(repository.Handle, url, options, logMessage, refspecs);
-        }
-
-        /// <summary>
-        /// Push the objectish to the destination reference on the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The <see cref="Remote"/> to push to.</param>
-        /// <param name="objectish">The source objectish to push.</param>
-        /// <param name="destinationSpec">The reference to update on the remote.</param>
-        public virtual void Push(
-            Remote remote,
-            string objectish,
-            string destinationSpec)
-        {
-            Ensure.ArgumentNotNull(objectish, "objectish");
-            Ensure.ArgumentNotNullOrEmptyString(destinationSpec, "destinationSpec");
-
-            Push(remote, string.Format(CultureInfo.InvariantCulture,
-                "{0}:{1}", objectish, destinationSpec));
-        }
-
-        /// <summary>
-        /// Push the objectish to the destination reference on the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The <see cref="Remote"/> to push to.</param>
-        /// <param name="objectish">The source objectish to push.</param>
-        /// <param name="destinationSpec">The reference to update on the remote.</param>
-        /// <param name="pushOptions"><see cref="PushOptions"/> controlling push behavior</param>
-        public virtual void Push(
-            Remote remote,
-            string objectish,
-            string destinationSpec,
-            PushOptions pushOptions)
-        {
-            Ensure.ArgumentNotNull(objectish, "objectish");
-            Ensure.ArgumentNotNullOrEmptyString(destinationSpec, "destinationSpec");
-
-            Push(remote, string.Format(CultureInfo.InvariantCulture,
-                "{0}:{1}", objectish, destinationSpec), pushOptions);
-        }
-
-        /// <summary>
-        /// Push specified reference to the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The <see cref="Remote"/> to push to.</param>
-        /// <param name="pushRefSpec">The pushRefSpec to push.</param>
-        public virtual void Push(
-            Remote remote,
-            string pushRefSpec)
-        {
-            Ensure.ArgumentNotNullOrEmptyString(pushRefSpec, "pushRefSpec");
-
-            Push(remote, new[] { pushRefSpec });
-        }
-        /// <summary>
-        /// Push specified reference to the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The <see cref="Remote"/> to push to.</param>
-        /// <param name="pushRefSpec">The pushRefSpec to push.</param>
-        /// <param name="pushOptions"><see cref="PushOptions"/> controlling push behavior</param>
-        public virtual void Push(
-            Remote remote,
-            string pushRefSpec,
-            PushOptions pushOptions)
-        {
-            Ensure.ArgumentNotNullOrEmptyString(pushRefSpec, "pushRefSpec");
-
-            Push(remote, new[] { pushRefSpec }, pushOptions);
-        }
-
-        /// <summary>
-        /// Push specified references to the <see cref="Remote"/>.
-        /// </summary>
-        /// <param name="remote">The <see cref="Remote"/> to push to.</param>
-        /// <param name="pushRefSpecs">The pushRefSpecs to push.</param>
-        public virtual void Push(
-            Remote remote,
-            IEnumerable<string> pushRefSpecs)
-        {
-            Push(remote, pushRefSpecs, null);
         }
 
         /// <summary>
@@ -493,7 +281,7 @@ namespace LibGit2Sharp
                 throw new LibGit2SharpException("No upstream remote for the current branch.");
             }
 
-            Fetch(currentBranch.Remote, options.FetchOptions);
+            Fetch(currentBranch.Remote, options.FetchOptions, null);
             return repository.MergeFetchedRefs(merger, options.MergeOptions);
         }
 
